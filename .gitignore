@@ -1,0 +1,16 @@
+.venv/
+.pi-context/
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+build/
+dist/
+*.egg-info/
+.DS_Store
+.idea/
+.vscode/

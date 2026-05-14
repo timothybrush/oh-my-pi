@@ -1,0 +1,32 @@
+services:
+  robomp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      additional_contexts:
+        # Built by `bin/stage-pi.sh` (rsynced pi checkout sans target/runs/...).
+        # The runtime mount below still points at the full $PI_ROOT.
+        pi: ./.pi-context
+    image: robomp:dev
+    container_name: robomp
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      ROBOMP_OMP_COMMAND: omp
+      ROBOMP_WORKSPACE_ROOT: /data/workspaces
+      ROBOMP_SQLITE_PATH: /data/robomp.sqlite
+      ROBOMP_LOG_DIR: /data/logs
+      PI_ROOT: /work/pi
+    # Resolve `llm-gateway.internal` (used in ~/.omp/agent/models.yml) to the
+    # Docker host. The actual gateway listens on 127.0.0.1:4000 on the host;
+    # `host-gateway` is Docker's alias for the host bridge IP.
+    extra_hosts:
+      - "llm-gateway.internal:host-gateway"
+    volumes:
+      - ${PI_ROOT:-/work/pi}:/work/pi:ro
+      - ./data:/data
+      # Provider config (proxy endpoints + stub api keys). Credentials stay on
+      # the host; only the routing config is exposed to the container.
+      - ${HOME}/.omp/agent/models.yml:/root/.omp/agent/models.yml:ro
+    ports:
+      - "8080:8080"

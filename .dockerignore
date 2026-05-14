@@ -1,0 +1,11 @@
+.venv/
+.pi-context/
+data/
+*.pyc
+__pycache__/
+.pytest_cache/
+.git/
+.env
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
